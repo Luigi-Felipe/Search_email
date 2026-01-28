@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de E-mail</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <h2>Verificar sites cadastrados</h2>
+
+  <!-- Botão de login com Google -->
+  <div id="g_id_onload"
+       data-client_id="SEU_CLIENT_ID.apps.googleusercontent.com"
+       data-callback="handleCredentialResponse">
+  </div>
+  <div class="g_id_signin" data-type="standard"></div>
+
+  <script>
+    function handleCredentialResponse(response) {
+      // Decodificar JWT para obter informações do usuário
+      const data = JSON.parse(atob(response.credential.split('.')[1]));
+      alert("E-mail do usuário: " + data.email);
+      // Aqui você pode enviar esse e-mail para seu backend (/consulta)
+    }
+  </script>
+</body>
+</html>
