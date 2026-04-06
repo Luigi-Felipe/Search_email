@@ -13,3 +13,128 @@
     </form>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de E-mail | Verificação</title>
+    <style>
+        /* Estilização Geral */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 0;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        p {
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Formulário */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #444;
+        }
+
+        input[type="email"] {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        button {
+            margin-top: 1rem;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Feedback visual simples */
+        input:invalid:not(:placeholder-shown) {
+            border-color: #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Verificar sites cadastrados</h2>
+    <p>Insira seu e-mail para descobrir em quais plataformas você possui registro.</p>
+    
+    <form action="/consulta" method="post" id="searchForm">
+        <div class="form-group">
+            <label for="email">E-mail cadastrado</label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="exemplo@email.com" 
+                required
+                autocomplete="email"
+            >
+            <button type="submit" id="btnSubmit">Consultar Agora</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Pequena interação para melhorar a experiência
+    const form = document.getElementById('searchForm');
+    const btn = document.getElementById('btnSubmit');
+
+    form.onsubmit = function() {
+        btn.innerText = "Buscando...";
+        btn.style.opacity = "0.7";
+        // O formulário seguirá o envio normal para o /consulta
+    };
+</script>
+
+</body>
+</html>
