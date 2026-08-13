@@ -1,15 +1,12 @@
-from flask import Flask, request, render_template_string, escape
+from flask import Flask, request, render_template_string
 
 app = Flask(__name__)
 
-                                                                               # Simulação de banco de dados (Dicionário)
-                                                                               # Dica: Em produção, use um banco como SQLite ou PostgreSQL
+                                  # Simulação de banco de dados (Dicionário)
 CADASTROS = {
-    "teste@email.com": ["Amazon", "Netflix", "Spotify"],
-    "joao@gmail.com": ["Facebook", "Instagram"]
+    "teste@email.com": ["Amazon", "Netflix", "Spotify"]
 }
-
-                                                           # Template HTML centralizado para manter a interface consistente
+                                    # Template HTML centralizado com lógica Jinja segura
 HTML_LAYOUT = """
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -24,6 +21,7 @@ HTML_LAYOUT = """
         .result { margin-top: 20px; padding: 15px; border-radius: 4px; }
         .found { background-color: #d4edda; color: #155724; }
         .not-found { background-color: #f8d7da; color: #721c24; }
+        ul { margin: 10px 0 0 20px; padding: 0; }
     </style>
 </head>
 <body>
@@ -31,13 +29,22 @@ HTML_LAYOUT = """
         <h2>Consulta de E-mail</h2>
         <p>Verifique em quais plataformas seu e-mail está cadastrado:</p>
         <form action="/consulta" method="POST">
-            <input type="email" name="email" placeholder="seu@email.com" required>
+            <input type="email" name="email" value="{{ email_pesquisado or '' }}" placeholder="seu@email.com" required>
             <button type="submit">Consultar</button>
         </form>
 
-        {% if resultado %}
-            <div class="result {{ classe_css }}">
-                {{ resultado | safe }}
+        {% if searched %}
+            <div class="result {% if sites %}found{% else %}not-found{% endif %}">
+                {% if sites %}
+                    <strong>{{ email_pesquisado }}</strong> encontrado em:
+                    <ul>
+                        {% for site in sites %}
+                            <li>{{ site }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    O e-mail <strong>{{ email_pesquisado }}</strong> não consta na nossa base.
+                {% endif %}
             </div>
         {% endif %}
     </div>
@@ -47,25 +54,19 @@ HTML_LAYOUT = """
 
 @app.route("/")
 def index():
-    return render_template_string(HTML_LAYOUT)
+    return render_template_string(HTML_LAYOUT, searched=False)
 
 @app.route("/consulta", methods=["POST"])
 def consulta():
-                                                        # 1. Proteção contra XSS: usando escape() para limpar a entrada do usuário
     email_bruto = request.form.get("email", "").strip().lower()
-    email_seguro = escape(email_bruto)
-    
     sites = CADASTROS.get(email_bruto, [])
     
-    if sites:
-        lista_html = "".join(f"<li>{s}</li>" for s in sites)
-        resultado = f"<strong>{email_seguro}</strong> encontrado em: <ul>{lista_html}</ul>"
-        classe_css = "found"
-    else:
-        resultado = f"O e-mail <strong>{email_seguro}</strong> não consta na nossa base."
-        classe_css = "not-found"
-
-    return render_template_string(HTML_LAYOUT, resultado=resultado, classe_css=classe_css)
+    return render_template_string(
+        HTML_LAYOUT, 
+        searched=True,
+        email_pesquisado=email_bruto, 
+        sites=sites
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)
