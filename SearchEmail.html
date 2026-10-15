@@ -1,26 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Consulta de E-mail</title>
-</head>
-<body>
-    <h2>Verificar sites cadastrados</h2>
-    <form action="/consulta" method="post">
-        <label for="email">Digite seu e-mail:</label>
-        <input type="email" id="email" name="email" required>
-        <button type="submit">Consultar</button>
-    </form>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consulta de E-mail | Verificação</title>
     <style>
-        /* Estilização Geral */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f7f9;
@@ -54,7 +38,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Formulário */
         .form-group {
             display: flex;
             flex-direction: column;
@@ -96,25 +79,32 @@
             background-color: #0056b3;
         }
 
-        /* Feedback visual simples */
-        input:invalid:not(:placeholder-shown) {
-            border-color: #ff4d4d;
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
         }
+
+        .found { background-color: #d4edda; color: #155724; }
+        .not-found { background-color: #f8d7da; color: #721c24; }
+        ul { margin: 10px 0 0 20px; padding: 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Verificar sites cadastrados</h2>
-    <p>Insira seu e-mail para descobrir em quais plataformas você possui registro.</p>
+    <h2>Consulta de E-mail</h2>
+    <p>Insira o seu e-mail para descobrir em quais plataformas possui registo.</p>
     
-    <form action="/consulta" method="post" id="searchForm">
+    <form action="/consulta" method="POST" id="searchForm">
         <div class="form-group">
-            <label for="email">E-mail cadastrado</label>
+            <label for="email">E-mail a consultar</label>
             <input 
                 type="email" 
                 id="email" 
                 name="email" 
+                value="{{ email_pesquisado or '' }}" 
                 placeholder="exemplo@email.com" 
                 required
                 autocomplete="email"
@@ -122,17 +112,30 @@
             <button type="submit" id="btnSubmit">Consultar Agora</button>
         </div>
     </form>
+
+    {% if searched %}
+        <div class="result {% if sites %}found{% else %}not-found{% endif %}">
+            {% if sites %}
+                <strong>{{ email_pesquisado }}</strong> encontrado em:
+                <ul>
+                    {% for site in sites %}
+                        <li>{{ site }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                O e-mail <strong>{{ email_pesquisado }}</strong> não consta na nossa base de dados.
+            {% endif %}
+        </div>
+    {% endif %}
 </div>
 
 <script>
-    // Pequena interação para melhorar a experiência
     const form = document.getElementById('searchForm');
     const btn = document.getElementById('btnSubmit');
 
     form.onsubmit = function() {
-        btn.innerText = "Buscando...";
+        btn.innerText = "A procurar...";
         btn.style.opacity = "0.7";
-        // O formulário seguirá o envio normal para o /consulta
     };
 </script>
 
